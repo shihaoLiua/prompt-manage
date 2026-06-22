@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from datetime import datetime, timezone
 from sqlalchemy import String, Text, Boolean, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -12,13 +13,13 @@ class Prompt(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
-    category_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("categories.id"), nullable=True)
+    category_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("categories.id"), nullable=True)
     title: Mapped[str] = mapped_column(String(200), nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    description: Mapped[str | None] = mapped_column(Text, nullable=True)
-    variables: Mapped[dict | None] = mapped_column(JSONB, default=list)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    variables: Mapped[Optional[dict]] = mapped_column(JSONB, default=list)
     is_favorite: Mapped[bool] = mapped_column(Boolean, default=False)
-    rating: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    rating: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     current_version: Mapped[int] = mapped_column(Integer, default=1)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at: Mapped[datetime] = mapped_column(
@@ -42,8 +43,8 @@ class PromptVersion(Base):
     prompt_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("prompts.id"), nullable=False)
     version: Mapped[int] = mapped_column(Integer, nullable=False)
     content: Mapped[str] = mapped_column(Text, nullable=False)
-    variables: Mapped[dict | None] = mapped_column(JSONB, default=list)
-    changelog: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    variables: Mapped[Optional[dict]] = mapped_column(JSONB, default=list)
+    changelog: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
     prompt = relationship("Prompt", back_populates="versions")

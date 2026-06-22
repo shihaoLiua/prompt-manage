@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 from datetime import datetime, timezone
 from sqlalchemy import String, Text, Boolean, ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -11,7 +12,7 @@ class ApiConfig(Base):
     __tablename__ = "api_configs"
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
+    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     api_base: Mapped[str] = mapped_column(String(500), nullable=False)
     api_key_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
