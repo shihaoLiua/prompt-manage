@@ -4,8 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import engine, Base
-from app.routers import auth
-# from app.routers import users, prompts, categories, tags, test_runs, batch_tests  # 后续任务实现
+from app.routers import auth, users
+# from app.routers import prompts, categories, tags, test_runs, batch_tests  # 后续任务实现
 
 
 @asynccontextmanager
@@ -32,7 +32,7 @@ app.add_middleware(
 
 app.include_router(auth.router)
 # 注意：以下路由尚未实现，但先注册占位，后续任务会实现
-# app.include_router(users.router)
+app.include_router(users.router)
 # app.include_router(prompts.router)
 # app.include_router(categories.router)
 # app.include_router(tags.router)
