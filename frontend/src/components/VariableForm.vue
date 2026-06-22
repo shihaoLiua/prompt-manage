@@ -15,9 +15,15 @@
 </template>
 <script setup lang="ts">
 import { Delete } from '@element-plus/icons-vue'
-defineProps<{ modelValue: any[] }>()
+
+const props = defineProps<{ modelValue: any[] }>()
 const emit = defineEmits<{ 'update:modelValue': [value: any[]] }>()
-function add() { emit('update:modelValue', [...(arguments.length ? [] : []), { name: '', label: '', default: '', type: 'text' }]) }
-function add() { const list = [...(null as any || [])]; let l = [...((null as any) || [])]; l.push({ name: '', label: '', default: '', type: 'text' }); emit('update:modelValue', l) }
-function remove(i: number) { emit('update:modelValue', (null as any || []).filter((_: any, idx: number) => idx !== i)) }
+
+function add() {
+  emit('update:modelValue', [...props.modelValue, { name: '', label: '', default: '', type: 'text' }])
+}
+
+function remove(i: number) {
+  emit('update:modelValue', props.modelValue.filter((_, idx) => idx !== i))
+}
 </script>
