@@ -4,8 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.database import engine, Base
-from app.routers import auth, users, categories, tags, prompts, test_runs
-# from app.routers import batch_tests  # 后续任务实现
+from app.routers import auth, users, categories, tags, prompts, test_runs, batch_tests
 
 
 @asynccontextmanager
@@ -37,7 +36,7 @@ app.include_router(prompts.router)
 app.include_router(categories.router)
 app.include_router(tags.router)
 app.include_router(test_runs.router)
-# app.include_router(batch_tests.router)
+app.include_router(batch_tests.router)
 
 
 @app.get("/api/health")
