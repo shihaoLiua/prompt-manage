@@ -177,7 +177,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { usePromptsStore } from '@/stores/prompts'
 import { useApiConfigsStore } from '@/stores/apiConfigs'
@@ -202,6 +202,16 @@ const rating = ref(0)
 const streamStatus = ref<'idle' | 'running' | 'success' | 'error'>('idle')
 const testForm = ref({ api_config_id: '', model: 'gpt-4o' })
 const testVarValues = ref<Record<string, string>>({})
+
+const allConfigs = computed(() => [...configStore.items, ...configStore.globalItems])
+
+watch(() => testForm.value.api_config_id, (id) => {
+  if (!id) return
+  const cfg = allConfigs.value.find(c => c.id === id)
+  if (cfg?.default_model) {
+    testForm.value.model = cfg.default_model
+  }
+})
 
 const categoryName = computed(() => {
   if (!prompt.value?.category_id) return null
