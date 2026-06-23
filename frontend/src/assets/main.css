@@ -11,35 +11,56 @@ body {
   color: #111827;
 }
 
-/* Override Element Plus input shadows for the DeepSeek-style theme */
-.el-input__wrapper {
+/* Remove ALL Element Plus input shadows — flat design */
+.el-input__wrapper,
+.el-input__wrapper.is-focus,
+.el-input__wrapper:hover,
+.el-input__wrapper.is-disabled {
   box-shadow: none !important;
-  border: 1px solid #E5E7EB !important;
+  outline: none !important;
+  border: 1px solid #D1D5DB !important;
   border-radius: 8px !important;
+  background: #FFFFFF !important;
   transition: border-color 0.15s !important;
 }
 
 .el-input__wrapper:hover {
-  border-color: #3B82F6 !important;
+  border-color: #9CA3AF !important;
 }
 
 .el-input__wrapper.is-focus {
   border-color: #3B82F6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
-/* Same for select */
-.el-select__wrapper {
+.el-input__inner {
   box-shadow: none !important;
-  border: 1px solid #E5E7EB !important;
+  outline: none !important;
+}
+
+.el-textarea__inner {
+  box-shadow: none !important;
+  border: 1px solid #D1D5DB !important;
+  border-radius: 8px !important;
+}
+
+.el-textarea__inner:focus {
+  border-color: #3B82F6 !important;
+}
+
+/* Select */
+.el-select__wrapper,
+.el-select__wrapper.is-focused,
+.el-select__wrapper:hover {
+  box-shadow: none !important;
+  outline: none !important;
+  border: 1px solid #D1D5DB !important;
   border-radius: 8px !important;
 }
 
 .el-select__wrapper:hover {
-  border-color: #3B82F6 !important;
+  border-color: #9CA3AF !important;
 }
 
 .el-select__wrapper.is-focused {
   border-color: #3B82F6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
