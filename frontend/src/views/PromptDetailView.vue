@@ -99,6 +99,36 @@
           </div>
         </div>
 
+        <!-- Variable inputs -->
+        <div v-if="prompt.variables?.length" class="test-vars-section">
+          <label class="test-label" style="margin-bottom: 8px; display: block">变量</label>
+          <div class="test-vars-grid">
+            <div
+              v-for="(v, i) in prompt.variables"
+              :key="i"
+              class="test-form-field"
+            >
+              <label class="test-var-label">{{ v.label || v.name }}</label>
+              <el-input
+                v-if="v.type === 'select' && v.options?.length"
+                v-model="testVarValues[v.name]"
+                :placeholder="v.default || v.name"
+              >
+                <template #append>
+                  <el-select v-model="testVarValues[v.name]" style="width: 110px">
+                    <el-option v-for="opt in v.options" :key="opt" :label="opt" :value="opt" />
+                  </el-select>
+                </template>
+              </el-input>
+              <el-input
+                v-else
+                v-model="testVarValues[v.name]"
+                :placeholder="v.default || v.name"
+              />
+            </div>
+          </div>
+        </div>
+
         <div v-if="streamStatus !== 'idle'" style="margin-top: 16px">
           <StreamOutput ref="streamRef" />
         </div>
@@ -171,6 +201,7 @@ const prompt = computed(() => store.current)
 const rating = ref(0)
 const streamStatus = ref<'idle' | 'running' | 'success' | 'error'>('idle')
 const testForm = ref({ api_config_id: '', model: 'gpt-4o' })
+const testVarValues = ref<Record<string, string>>({})
 
 const categoryName = computed(() => {
   if (!prompt.value?.category_id) return null
@@ -211,6 +242,16 @@ async function handleDelete() {
   router.push('/prompts')
 }
 
+function initVarValues() {
+  const vars: Record<string, string> = {}
+  if (prompt.value?.variables) {
+    for (const v of prompt.value.variables) {
+      vars[v.name] = v.default || ''
+    }
+  }
+  testVarValues.value = vars
+}
+
 async function startTest() {
   if (!prompt.value || !testForm.value.api_config_id) return
   testing.value = true
@@ -224,7 +265,7 @@ async function startTest() {
       body: JSON.stringify({
         api_config_id: testForm.value.api_config_id,
         model: testForm.value.model,
-        variables: {},
+        variables: testVarValues.value,
       }),
     })
 
@@ -288,6 +329,7 @@ onMounted(async () => {
   const id = route.params.id as string
   await store.fetchOne(id)
   rating.value = prompt.value?.rating || 0
+  initVarValues()
   await Promise.all([
     configStore.fetchMine(),
     configStore.fetchGlobal(),
@@ -415,5 +457,23 @@ onMounted(async () => {
 .test-empty-state p {
   margin-top: 12px;
   font-size: 14px;
+}
+
+.test-vars-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E5E7EB;
+}
+
+.test-vars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.test-var-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
 }
 </style>
