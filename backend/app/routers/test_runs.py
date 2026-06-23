@@ -83,8 +83,10 @@ async def test_prompt_stream(
                     error_msg = event["message"]
                     yield {"event": "error", "data": json.dumps(event)}
         except Exception as e:
-            error_msg = str(e)
-            yield {"event": "error", "data": json.dumps({"type": "error", "message": str(e)})}
+            error_msg = f"[{type(e).__name__}] {str(e) or 'Unknown error'}"
+            import traceback
+            print(f"Test error: {error_msg}\n{traceback.format_exc()}")
+            yield {"event": "error", "data": json.dumps({"type": "error", "message": error_msg})}
         finally:
             test_run.response_text = full_response
             test_run.tokens_prompt = prompt_tokens
