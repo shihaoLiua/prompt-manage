@@ -1,0 +1,63 @@
+# Development mode — code hot-reload, no rebuild needed
+# Usage: docker compose -f docker-compose.dev.yaml up -d
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: promptuser
+      POSTGRES_PASSWORD: promptpass
+      POSTGRES_DB: promptdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U promptuser -d promptdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    environment:
+      DATABASE_URL: "postgresql+asyncpg://promptuser:promptpass@db:5432/promptdb"
+      JWT_SECRET_KEY: "dev-secret-key-change-in-production"
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      JWT_REFRESH_TOKEN_EXPIRE_DAYS: 7
+      FERNET_SECRET_KEY: "dev-fernet-key-change-in-production"
+      FIRST_SUPERUSER_EMAIL: "admin@example.com"
+      FIRST_SUPERUSER_PASSWORD: "admin123"
+      CORS_ORIGINS: "http://localhost:5173,http://localhost:3000,http://localhost"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js
+      - ./frontend/postcss.config.js:/app/postcss.config.js
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
