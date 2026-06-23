@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="loading">
+  <div v-loading="loading" element-loading-background="rgba(9, 9, 11, 0.7)">
     <el-page-header content="提示词详情" @back="router.push('/prompts')" />
 
     <div v-if="prompt" style="margin-top: 20px">
@@ -9,9 +9,9 @@
           <div class="detail-header">
             <div class="detail-title-row">
               <el-icon
-                :color="prompt.is_favorite ? '#FFD166' : '#CBD5E1'"
-                :size="22"
-                style="cursor: pointer; transition: transform 0.2s"
+                :color="prompt.is_favorite ? '#F59E0B' : '#3F3F46'"
+                :size="20"
+                style="cursor: pointer; transition: color 0.15s"
                 @click="toggleFav"
               >
                 <StarFilled v-if="prompt.is_favorite" />
@@ -24,104 +24,119 @@
             <div class="detail-actions">
               <el-button size="small" :icon="Edit" @click="router.push(`/prompts/${prompt.id}/edit`)">编辑</el-button>
               <el-button size="small" :icon="DataBoard" @click="router.push(`/prompts/${prompt.id}/batch-test`)">批量测试</el-button>
-              <el-button size="small" type="danger" :icon="Delete" plain @click="handleDelete">删除</el-button>
+              <el-button size="small" type="danger" :icon="DeleteIcon" plain @click="handleDelete">删除</el-button>
             </div>
           </div>
         </template>
 
-        <el-descriptions :column="2" border class="pm-descriptions">
-          <el-descriptions-item label="描述" :span="2">{{ prompt.description || '-' }}</el-descriptions-item>
-          <el-descriptions-item label="分类">{{ categoryName || '-' }}</el-descriptions-item>
-          <el-descriptions-item label="更新时间">{{ formatDate(prompt.updated_at) }}</el-descriptions-item>
-          <el-descriptions-item label="标签" :span="2">
-            <el-tag v-for="tag in prompt.tags" :key="tag.id" size="small" style="margin-right: 6px; margin-bottom: 2px">
-              {{ tag.name }}
-            </el-tag>
-            <span v-if="!prompt.tags?.length" style="color: var(--pm-text-muted)">-</span>
-          </el-descriptions-item>
-        </el-descriptions>
+        <div class="detail-meta">
+          <div class="meta-item">
+            <span class="meta-label">描述</span>
+            <span class="meta-value">{{ prompt.description || '—' }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">分类</span>
+            <span class="meta-value">{{ categoryName || '—' }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">更新时间</span>
+            <span class="meta-value">{{ formatDate(prompt.updated_at) }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">标签</span>
+            <span class="meta-value">
+              <el-tag v-for="tag in prompt.tags" :key="tag.id" size="small" style="margin-right: 4px">
+                {{ tag.name }}
+              </el-tag>
+              <span v-if="!prompt.tags?.length" style="color: var(--pm-text-tertiary)">—</span>
+            </span>
+          </div>
+        </div>
 
-        <h4 style="margin: 20px 0 8px; font-size: 14px; font-weight: 600; color: var(--pm-text-primary)">提示词内容</h4>
+        <h4 class="section-title">提示词内容</h4>
         <div class="content-block">{{ prompt.content }}</div>
       </el-card>
 
       <!-- Single Test Card -->
-      <el-card style="margin-top: 20px">
+      <el-card style="margin-top: 16px">
         <template #header>
-          <div style="display: flex; align-items: center; gap: 8px">
-            <el-icon :size="18" color="#4361EE"><VideoPlay /></el-icon>
+          <div class="card-header-with-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
             <span>单次流式测试</span>
           </div>
         </template>
 
-        <el-form :model="testForm" label-width="100px" label-position="top">
-          <div style="display: flex; gap: 12px; flex-wrap: wrap">
-            <el-form-item label="API 配置" style="flex: 1; min-width: 200px">
-              <el-select v-model="testForm.api_config_id" placeholder="选择 API 配置" style="width: 100%">
-                <el-option-group v-if="configStore.items.length" label="我的配置">
-                  <el-option v-for="cfg in configStore.items" :key="cfg.id" :label="cfg.name" :value="cfg.id" />
-                </el-option-group>
-                <el-option-group v-if="configStore.globalItems.length" label="全局配置">
-                  <el-option v-for="cfg in configStore.globalItems" :key="cfg.id" :label="cfg.name" :value="cfg.id" />
-                </el-option-group>
-                <el-empty v-if="!configStore.items.length && !configStore.globalItems.length" description="暂无配置，请先在设置中添加" />
-              </el-select>
-            </el-form-item>
-            <el-form-item label="模型" style="flex: 0 0 180px">
-              <el-input v-model="testForm.model" placeholder="如 gpt-4o" />
-            </el-form-item>
-            <el-form-item label=" " style="flex: 0 0 auto; align-self: flex-end">
-              <el-button
-                type="primary"
-                :icon="VideoPlay"
-                :loading="testing"
-                :disabled="!testForm.api_config_id || !testForm.model"
-                @click="startTest"
-              >
-                {{ testing ? '测试中...' : '运行测试' }}
-              </el-button>
-            </el-form-item>
+        <div class="test-form-row">
+          <div class="test-form-field" style="flex: 1; min-width: 200px">
+            <label class="test-label">API 配置</label>
+            <el-select v-model="testForm.api_config_id" placeholder="选择 API 配置" style="width: 100%">
+              <el-option-group v-if="configStore.items.length" label="我的配置">
+                <el-option v-for="cfg in configStore.items" :key="cfg.id" :label="cfg.name" :value="cfg.id" />
+              </el-option-group>
+              <el-option-group v-if="configStore.globalItems.length" label="全局配置">
+                <el-option v-for="cfg in configStore.globalItems" :key="cfg.id" :label="cfg.name" :value="cfg.id" />
+              </el-option-group>
+              <template #empty>
+                <div style="padding: 12px; color: var(--pm-text-tertiary); font-size: 13px">暂无配置，请在设置中添加</div>
+              </template>
+            </el-select>
           </div>
-        </el-form>
+          <div class="test-form-field" style="flex: 0 0 160px">
+            <label class="test-label">模型</label>
+            <el-input v-model="testForm.model" placeholder="如 gpt-4o" />
+          </div>
+          <div class="test-form-field" style="flex: 0 0 auto; align-self: flex-end">
+            <el-button
+              type="primary"
+              :icon="VideoPlay"
+              :loading="testing"
+              :disabled="!testForm.api_config_id || !testForm.model"
+              size="large"
+              @click="startTest"
+            >
+              {{ testing ? '运行中' : '运行测试' }}
+            </el-button>
+          </div>
+        </div>
 
-        <!-- Stream output -->
         <div v-if="streamStatus !== 'idle'" style="margin-top: 16px">
           <StreamOutput ref="streamRef" />
         </div>
 
-        <!-- Empty state -->
-        <div v-if="streamStatus === 'idle'" style="text-align: center; padding: 40px 0; color: var(--pm-text-muted)">
-          <el-icon :size="48" color="#E2E8F0"><ChatLineSquare /></el-icon>
-          <p style="margin-top: 12px; font-size: 14px">选择 API 配置和模型后点击"运行测试"</p>
+        <div v-if="streamStatus === 'idle'" class="test-empty-state">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#3F3F46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <p>选择 API 配置和模型后点击运行</p>
         </div>
       </el-card>
 
-      <!-- Test History Card -->
-      <el-card style="margin-top: 20px">
+      <!-- Test History -->
+      <el-card style="margin-top: 16px">
         <template #header>
-          <div style="display: flex; align-items: center; gap: 8px">
-            <el-icon :size="18" color="#4361EE"><Timer /></el-icon>
+          <div class="card-header-with-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             <span>测试历史</span>
           </div>
         </template>
         <el-table :data="testRuns" v-if="testRuns.length" stripe style="width: 100%">
           <el-table-column prop="model" label="模型" width="120" />
-          <el-table-column label="状态" width="80">
+          <el-table-column label="状态" width="90">
             <template #default="{ row }">
-              <el-tag :type="row.status === 'success' ? 'success' : row.status === 'running' ? 'warning' : 'danger'" size="small">
+              <el-tag :type="row.status === 'success' ? 'success' : row.status === 'running' ? 'warning' : 'danger'" size="small" effect="dark">
                 {{ row.status === 'success' ? '成功' : row.status === 'running' ? '运行中' : '失败' }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column prop="latency_ms" label="延迟" width="100">
-            <template #default="{ row }">{{ row.latency_ms ? `${row.latency_ms}ms` : '-' }}</template>
+          <el-table-column label="延迟" width="100">
+            <template #default="{ row }">{{ row.latency_ms ? `${row.latency_ms}ms` : '—' }}</template>
           </el-table-column>
-          <el-table-column prop="created_at" label="时间" width="180">
+          <el-table-column label="时间" width="170">
             <template #default="{ row }">{{ formatDate(row.created_at) }}</template>
           </el-table-column>
-          <el-table-column label="操作" width="80">
+          <el-table-column label="操作" width="70">
             <template #default="{ row }">
-              <el-button size="small" text type="primary" @click="deleteRun(row.id)">删除</el-button>
+              <el-button size="small" text type="danger" @click="deleteRun(row.id)">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -138,7 +153,7 @@ import { usePromptsStore } from '@/stores/prompts'
 import { useApiConfigsStore } from '@/stores/apiConfigs'
 import { useCategoriesStore } from '@/stores/categories'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Edit, Delete, DataBoard, VideoPlay, Timer, ChatLineSquare } from '@element-plus/icons-vue'
+import { Edit, Delete as DeleteIcon, DataBoard, VideoPlay } from '@element-plus/icons-vue'
 import client from '@/api/client'
 import StreamOutput from '@/components/StreamOutput.vue'
 
@@ -155,7 +170,6 @@ const testRuns = ref<any[]>([])
 const prompt = computed(() => store.current)
 const rating = ref(0)
 const streamStatus = ref<'idle' | 'running' | 'success' | 'error'>('idle')
-
 const testForm = ref({ api_config_id: '', model: 'gpt-4o' })
 
 const categoryName = computed(() => {
@@ -201,6 +215,7 @@ async function startTest() {
   if (!prompt.value || !testForm.value.api_config_id) return
   testing.value = true
   streamStatus.value = 'running'
+  streamRef.value?.reset()
   try {
     const token = localStorage.getItem('access_token')
     const resp = await fetch(`/api/prompts/${prompt.value.id}/test`, {
@@ -217,6 +232,7 @@ async function startTest() {
       const err = await resp.json()
       ElMessage.error(err.detail || '测试启动失败')
       streamStatus.value = 'idle'
+      testing.value = false
       return
     }
 
@@ -303,12 +319,13 @@ onMounted(async () => {
 }
 
 .detail-version {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
-  color: var(--pm-primary);
-  background: var(--pm-primary-light);
+  color: var(--pm-accent);
+  background: var(--pm-accent-bg);
   padding: 2px 8px;
   border-radius: 4px;
+  letter-spacing: 0.3px;
 }
 
 .detail-actions {
@@ -316,7 +333,87 @@ onMounted(async () => {
   gap: 8px;
 }
 
-.pm-descriptions {
-  margin-top: 4px;
+.detail-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--pm-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.meta-item {
+  display: flex;
+  border-bottom: 1px solid var(--pm-border-light);
+  border-right: 1px solid var(--pm-border-light);
+}
+
+.meta-item:nth-child(even) {
+  border-right: none;
+}
+
+.meta-item:nth-last-child(-n+2) {
+  border-bottom: none;
+}
+
+.meta-label {
+  flex: 0 0 80px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--pm-text-secondary);
+  background: var(--pm-bg-elevated);
+}
+
+.meta-value {
+  flex: 1;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--pm-text-primary);
+}
+
+.section-title {
+  margin: 20px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pm-text-primary);
+}
+
+.card-header-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.test-form-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.test-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.test-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pm-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.test-empty-state {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--pm-text-tertiary);
+}
+
+.test-empty-state p {
+  margin-top: 12px;
+  font-size: 14px;
 }
 </style>
