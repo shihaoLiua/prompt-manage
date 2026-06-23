@@ -1,0 +1,175 @@
+/* Prompt Manager — Unified Theme */
+/* Primary: Indigo (#4361EE), Sidebar: Deep Navy (#1A2332) */
+
+:root {
+  --pm-primary: #4361EE;
+  --pm-primary-dark: #3A56D4;
+  --pm-primary-light: #EEF0FF;
+  --pm-primary-gradient: linear-gradient(135deg, #4361EE 0%, #6C63FF 100%);
+
+  --pm-sidebar-bg: #1A2332;
+  --pm-sidebar-text: #A3AED0;
+  --pm-sidebar-active: #FFFFFF;
+  --pm-sidebar-hover: rgba(255, 255, 255, 0.05);
+
+  --pm-header-bg: #FFFFFF;
+  --pm-header-border: #E8ECF1;
+
+  --pm-page-bg: #F5F6FA;
+  --pm-card-bg: #FFFFFF;
+  --pm-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  --pm-text-primary: #1A2332;
+  --pm-text-secondary: #5A6A85;
+  --pm-text-muted: #A3AED0;
+
+  --pm-border: #E8ECF1;
+  --pm-border-light: #F0F2F5;
+
+  --pm-success: #06D6A0;
+  --pm-warning: #FFD166;
+  --pm-danger: #EF476F;
+  --pm-info: #A3AED0;
+
+  /* Element Plus Overrides */
+  --el-color-primary: var(--pm-primary) !important;
+  --el-color-primary-dark-2: var(--pm-primary-dark) !important;
+  --el-color-primary-light-3: #6C63FF !important;
+  --el-color-primary-light-5: #A5A0FF !important;
+  --el-color-primary-light-7: #CECBFF !important;
+  --el-color-primary-light-8: #E3E1FF !important;
+  --el-color-primary-light-9: var(--pm-primary-light) !important;
+
+  --el-color-success: var(--pm-success) !important;
+  --el-color-warning: var(--pm-warning) !important;
+  --el-color-danger: var(--pm-danger) !important;
+  --el-color-info: var(--pm-info) !important;
+
+  --el-border-radius-base: 8px;
+  --el-border-radius-small: 6px;
+  --el-font-size-base: 14px;
+}
+
+/* Global Styles */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--pm-page-bg);
+  color: var(--pm-text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Override Element Plus card */
+.el-card {
+  border: none !important;
+  box-shadow: var(--pm-card-shadow) !important;
+  border-radius: 12px !important;
+}
+
+.el-card__header {
+  padding: 16px 20px !important;
+  border-bottom: 1px solid var(--pm-border-light) !important;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* Page header */
+.el-page-header {
+  margin-bottom: 8px;
+}
+
+.el-page-header__title {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--pm-text-primary) !important;
+}
+
+/* Tables */
+.el-table {
+  border-radius: 8px !important;
+  overflow: hidden;
+}
+
+.el-table th.el-table__cell {
+  background: var(--pm-primary-light) !important;
+  color: var(--pm-primary) !important;
+  font-weight: 600 !important;
+}
+
+/* Buttons */
+.el-button--primary {
+  background: var(--pm-primary-gradient) !important;
+  border: none !important;
+  font-weight: 500 !important;
+}
+
+.el-button--primary:hover {
+  opacity: 0.9 !important;
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3) !important;
+}
+
+/* Input focus */
+.el-input:focus,
+.el-select:focus {
+  --el-input-focus-border-color: var(--pm-primary) !important;
+}
+
+/* Tags */
+.el-tag {
+  border-radius: 4px !important;
+  font-weight: 500 !important;
+}
+
+/* Page titles */
+.page-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--pm-text-primary);
+  margin: 0 0 4px 0;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: var(--pm-text-muted);
+  margin: 0 0 20px 0;
+}
+
+/* Stats cards */
+.stat-card {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.stat-card .stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  background: var(--pm-primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.stat-card .stat-label {
+  color: var(--pm-text-muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* Content display */
+.content-block {
+  background: #F8F9FC;
+  border: 1px solid var(--pm-border-light);
+  border-radius: 8px;
+  padding: 16px;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.6;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+}
+
+/* Transitions */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
