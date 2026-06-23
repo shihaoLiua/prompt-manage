@@ -11,4 +11,35 @@ body {
   color: #111827;
 }
 
-/* Remove Element Plus default card/table overrides for pages that use Tailwind */
+/* Override Element Plus input shadows for the DeepSeek-style theme */
+.el-input__wrapper {
+  box-shadow: none !important;
+  border: 1px solid #E5E7EB !important;
+  border-radius: 8px !important;
+  transition: border-color 0.15s !important;
+}
+
+.el-input__wrapper:hover {
+  border-color: #3B82F6 !important;
+}
+
+.el-input__wrapper.is-focus {
+  border-color: #3B82F6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* Same for select */
+.el-select__wrapper {
+  box-shadow: none !important;
+  border: 1px solid #E5E7EB !important;
+  border-radius: 8px !important;
+}
+
+.el-select__wrapper:hover {
+  border-color: #3B82F6 !important;
+}
+
+.el-select__wrapper.is-focused {
+  border-color: #3B82F6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
