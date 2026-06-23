@@ -5,6 +5,8 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { resolve } from 'path'
 
+const apiTarget = process.env.API_PROXY_TARGET || 'http://localhost:8000'
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -15,9 +17,9 @@ export default defineConfig({
     alias: { '@': resolve(__dirname, 'src') },
   },
   server: {
-    port: 5173,
+    port: 3000,
     proxy: {
-      '/api': { target: 'http://localhost:8000', changeOrigin: true },
+      '/api': { target: apiTarget, changeOrigin: true },
     },
   },
 })

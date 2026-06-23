@@ -32,7 +32,7 @@ services:
       FERNET_SECRET_KEY: "dev-fernet-key-change-in-production"
       FIRST_SUPERUSER_EMAIL: "admin@example.com"
       FIRST_SUPERUSER_PASSWORD: "admin123"
-      CORS_ORIGINS: "http://localhost:5173,http://localhost:3000,http://localhost"
+      CORS_ORIGINS: "http://localhost:3000"
     ports:
       - "8000:8000"
     volumes:
@@ -47,7 +47,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.dev
     ports:
-      - "5173:5173"
+      - "3000:3000"
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/index.html:/app/index.html
@@ -55,6 +55,8 @@ services:
       - ./frontend/tsconfig.json:/app/tsconfig.json
       - ./frontend/tailwind.config.js:/app/tailwind.config.js
       - ./frontend/postcss.config.js:/app/postcss.config.js
+    environment:
+      - API_PROXY_TARGET=http://backend:8000
     depends_on:
       - backend
     restart: unless-stopped
